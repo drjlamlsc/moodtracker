@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mood Tracker</title>
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 16px 16px 32px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .title-block {
+      flex: 1;
+      min-width: 0;
+    }
+
+    h1 {
+      margin: 0 0 4px;
+      font-size: 1.5rem;
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+
+    .header-buttons {
+      display: flex;
+      gap: 6px;
+    }
+
+    .toggle-btn {
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      background: #f9fafb;
+      color: #4b5563;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .toggle-btn:active {
+      transform: translateY(1px);
+    }
+
+    .main-tabs {
+      display: flex;
+      background: #e5e7eb;
+      border-radius: 999px;
+      padding: 3px;
+      margin-bottom: 12px;
+    }
+
+    .main-tabs .tab-btn {
+      flex: 1;
+      background: transparent;
+    }
+
+    .main-tabs .tab-btn.active {
+      background: #ffffff;
+      color: #111827;
+      font-weight: 600;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.15);
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
+      margin-bottom: 16px;
+      border: 1px solid #e5e7eb;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+      color: #374151;
+    }
+
+    input,
+    textarea,
+    button {
+      font-family: inherit;
+      font-size: 1rem;
+    }
+
+    .form-row {
+      margin-bottom: 12px;
+    }
+
+    input[type="date"],
+    textarea {
+      width: 100%;
+      box-sizing: border-box;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      padding: 8px 10px;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      background: #f9fafb;
+    }
+
+    input[type="date"]:focus,
+    textarea:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
+      background: #ffffff;
+    }
+
+    textarea {
+      min-height: 72px;
+      resize: vertical;
+    }
+
+    .mood-options {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .mood-option {
+      flex: 1;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      padding: 6px 4px;
+      background: #f9fafb;
+      cursor: pointer;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 0.75rem;
+      transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease;
+    }
+
+    .mood-option:active {
+      transform: translateY(1px);
+    }
+
+    .mood-option.selected {
+      border-color: #6366f1;
+      background: rgba(99, 102, 241, 0.06);
+      box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.4);
+    }
+
+    .mood-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mood-icon img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .mood-name {
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      width: 100%;
+      border: none;
+      border-radius: 999px;
+      padding: 10px 16px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: #ffffff;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+      box-shadow: 0 10px 24px rgba(79, 70, 229, 0.3);
+      transition: transform 0.1s ease, box-shadow 0.1s ease, opacity 0.1s ease;
+    }
+
+    .btn-primary:active {
+      transform: translateY(1px);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+      opacity: 0.9;
+    }
+
+    .btn-secondary {
+      border-radius: 999px;
+      border: none;
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      background: #e5e7eb;
+      color: #4b5563;
+    }
+
+    .btn-danger-full {
+      margin-top: 12px;
+      background: #fee2e2;
+      color: #b91c1c;
+      width: 100%;
+    }
+
+    .entries-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .entries-header h2 {
+      font-size: 1rem;
+      margin: 0;
+    }
+
+    .view-tabs {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .tab-btn {
+      border-radius: 999px;
+      border: none;
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      background: #e5e7eb;
+      color: #4b5563;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background: #6366f1;
+      color: #ffffff;
+    }
+
+    .entries-empty {
+      font-size: 0.9rem;
+      color: #9ca3af;
+      text-align: center;
+      padding: 12px 4px;
+    }
+
+    .entry {
+      border-radius: 12px;
+      padding: 10px 12px;
+      border: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 8px;
+      background: #f9fafb;
+    }
+
+    .entry-main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .entry-top-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 2px;
+    }
+
+    .entry-date {
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+
+    .entry-mood-badge {
+      font-size: 0.8rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(96, 165, 250, 0.15);
+      color: #1d4ed8;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .entry-note {
+      font-size: 0.9rem;
+      color: #374151;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .entry-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      margin-top: 2px;
+    }
+
+    .calendar-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .calendar-nav-btn {
+      border-radius: 999px;
+      border: none;
+      padding: 2px 8px;
+      font-size: 0.8rem;
+      background: #e5e7eb;
+      color: #4b5563;
+      cursor: pointer;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      font-size: 0.7rem;
+    }
+
+    .calendar-weekday {
+      text-align: center;
+      color: #6b7280;
+      margin-bottom: 2px;
+    }
+
+    .calendar-cell {
+      border-radius: 8px;
+      background: transparent;
+      border: 1px solid #e5e7eb;
+      min-height: 56px;
+      padding: 3px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+    }
+
+    .calendar-cell-empty {
+      background: transparent;
+      border: none;
+    }
+
+    .calendar-day-number {
+      font-size: 0.7rem;
+      color: #6b7280;
+    }
+
+    .calendar-moods {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2px;
+    }
+
+    .calendar-moods img {
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+      display: block;
+    }
+
+    /* Themes */
+    body.theme-light {
+      background: #f5f5f7;
+      color: #111827;
+    }
+
+    .theme-light .card {
+      background: #ffffff;
+      border-color: #e5e7eb;
+    }
+
+    .theme-light input[type="date"],
+    .theme-light textarea {
+      background: #f9fafb;
+      border-color: #d1d5db;
+      color: #111827;
+    }
+
+    .theme-light .mood-option {
+      background: #f9fafb;
+      border-color: #e5e7eb;
+    }
+
+    .theme-light .entry {
+      background: #f9fafb;
+      border-color: #e5e7eb;
+    }
+
+    body.theme-dark {
+      background: #020617;
+      color: #e5e7eb;
+    }
+
+    .theme-dark .card {
+      background: #020617;
+      border-color: #1f2937;
+    }
+
+    .theme-dark input[type="date"],
+    .theme-dark textarea {
+      background: #020617;
+      border-color: #374151;
+      color: #e5e7eb;
+    }
+
+    .theme-dark .mood-option {
+      background: #020617;
+      border-color: #374151;
+    }
+
+    .theme-dark .entry {
+      background: #020617;
+      border-color: #1f2937;
+    }
+  </style>
+</head>
+<body class="theme-light">
+  <div class="app">
+    <header>
+      <div class="title-block">
+        <h1 id="titleText">Mood Tracker</h1>
+        <div class="subtitle" id="subtitleText">Log how you feel, one day at a time.</div>
+      </div>
+      <div class="header-buttons">
+        <button id="languageToggle" class="toggle-btn">中文</button>
+        <button id="themeToggle" class="toggle-btn">Dark</button>
+      </div>
+    </header>
+
+    <div class="main-tabs">
+      <button type="button" class="tab-btn main-tab active" data-main="entry" id="tabEntry">Log</button>
+      <button type="button" class="tab-btn main-tab" data-main="history" id="tabHistory">History</button>
+    </div>
+
+    <div id="entrySection">
+      <div class="card">
+        <form id="entryForm">
+          <div class="form-row">
+            <label for="date" id="labelDate">Date</label>
+            <input type="date" id="date" required />
+          </div>
+
+          <div class="form-row">
+            <label for="mood" id="labelMood">Mood</label>
+            <div class="mood-options" id="moodOptions">
+              <button type="button" class="mood-option" data-mood="5">
+                <div class="mood-icon"><img src="mood_awesome.png" alt="Awesome" /></div>
+                <div class="mood-name" data-mood-label="5">Awesome</div>
+              </button>
+              <button type="button" class="mood-option" data-mood="4">
+                <div class="mood-icon"><img src="mood_good.png" alt="Good" /></div>
+                <div class="mood-name" data-mood-label="4">Good</div>
+              </button>
+              <button type="button" class="mood-option" data-mood="3">
+                <div class="mood-icon"><img src="mood_meh.png" alt="Meh" /></div>
+                <div class="mood-name" data-mood-label="3">Meh</div>
+              </button>
+              <button type="button" class="mood-option" data-mood="2">
+                <div class="mood-icon"><img src="mood_bad.png" alt="Bad" /></div>
+                <div class="mood-name" data-mood-label="2">Bad</div>
+              </button>
+              <button type="button" class="mood-option" data-mood="1">
+                <div class="mood-icon"><img src="mood_awful.png" alt="Awful" /></div>
+                <div class="mood-name" data-mood-label="1">Awful</div>
+              </button>
+            </div>
+            <input type="hidden" id="mood" value="3" />
+          </div>
+
+          <div class="form-row">
+            <label for="note" id="labelNotes">Notes (optional)</label>
+            <textarea
+              id="note"
+              placeholder="What was happening today? Any triggers, wins, or insights?"
+            ></textarea>
+          </div>
+
+          <button type="submit" class="btn-primary" id="btnSaveMood">Save mood</button>
+        </form>
+        <button id="clearDataBtn" type="button" class="btn-secondary btn-danger-full">Clear all data</button>
+      </div>
+    </div>
+
+    <div id="historySection" class="hidden">
+      <div class="card">
+        <div class="entries-header">
+          <h2 id="yourMoodsHeading">Your moods</h2>
+          <div class="view-tabs">
+            <button type="button" class="tab-btn view-tab active" data-view="list" id="tabList">List</button>
+            <button type="button" class="tab-btn view-tab" data-view="calendar" id="tabCalendar">Calendar</button>
+          </div>
+        </div>
+        <div id="listView"></div>
+        <div id="calendarView" class="hidden"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "moodEntriesV1";
+    const THEME_KEY = "moodThemeV1";
+    const LANG_KEY = "moodLangV1";
+
+    const moodMeta = {
+      1: { emoji: "😿", img: "mood_awful.png" },
+      2: { emoji: "🙁", img: "mood_bad.png" },
+      3: { emoji: "😐", img: "mood_meh.png" },
+      4: { emoji: "🙂", img: "mood_good.png" },
+      5: { emoji: "😺", img: "mood_awesome.png" }
+    };
+
+    const calendarMoodColors = {
+      5: "rgba(34,197,94,0.3)",   // awesome - green
+      4: "rgba(132,204,22,0.3)",  // good - lime
+      3: "rgba(234,179,8,0.3)",   // meh - yellow
+      2: "rgba(249,115,22,0.3)",  // bad - orange
+      1: "rgba(239,68,68,0.3)"    // awful - red
+    };
+
+    const translations = {
+      en: {
+        title: "Mood Tracker",
+        subtitle: "Log how you feel, one day at a time.",
+        date: "Date",
+        mood: "Mood",
+        notes: "Notes (optional)",
+        notesPlaceholder:
+          "What was happening today? Any triggers, wins, or insights?",
+        saveMood: "Save mood",
+        clearData: "Clear all data",
+        clearConfirm:
+          "This will delete ALL mood data. This action cannot be undone. Proceed?",
+        clearDone: "All data cleared.",
+        yourMoods: "Your moods",
+        tabEntry: "Log",
+        tabHistory: "History",
+        tabList: "List",
+        tabCalendar: "Calendar",
+        noEntries: "No entries yet. Start by saving your first mood above.",
+        themeDark: "Dark",
+        themeLight: "Light",
+        langButton: "中文",
+        months: [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December"
+        ],
+        weekdays: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        mood1: "Awful",
+        mood2: "Bad",
+        mood3: "Meh",
+        mood4: "Good",
+        mood5: "Awesome",
+        validationSelectMood: "Please select a date and mood.",
+        delete: "Delete"
+      },
+      zh: {
+        title: "心情記錄",
+        subtitle: "一天一記錄，陪你觀察心情變化。",
+        date: "日期",
+        mood: "心情",
+        notes: "備註（可選）",
+        notesPlaceholder:
+          "今日發生咩事？有咩觸發點、困難或者細細的好事？",
+        saveMood: "儲存心情",
+        clearData: "清除所有記錄",
+        clearConfirm: "將會刪除所有心情記錄，無法復原。是否確定？",
+        clearDone: "已清除所有記錄。",
+        yourMoods: "你的心情記錄",
+        tabEntry: "填寫",
+        tabHistory: "紀錄",
+        tabList: "列表",
+        tabCalendar: "月曆",
+        noEntries:
+          "暫時未有記錄，可以先喺上面儲存第一個心情。",
+        themeDark: "深色",
+        themeLight: "淺色",
+        langButton: "En",
+        months: [
+          "1月",
+          "2月",
+          "3月",
+          "4月",
+          "5月",
+          "6月",
+          "7月",
+          "8月",
+          "9月",
+          "10月",
+          "11月",
+          "12月"
+        ],
+        weekdays: ["一", "二", "三", "四", "五", "六", "日"],
+        mood1: "好差",
+        mood2: "差",
+        mood3: "一般",
+        mood4: "幾好",
+        mood5: "好好",
+        validationSelectMood: "請選擇日期同心情。",
+        delete: "刪除"
+      }
+    };
+
+    let currentYear;
+    let currentMonth; // 0-11
+    let currentLang = "en";
+
+    function t(key) {
+      const table = translations[currentLang] || translations.en;
+      return table[key] || translations.en[key] || key;
+    }
+
+    function getMoodLabel(mood) {
+      const key = `mood${mood}`;
+      return t(key);
+    }
+
+    function getEntries() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return [];
+      try {
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (e) {
+        console.error("Error parsing stored entries", e);
+        return [];
+      }
+    }
+
+    function saveEntries(entries) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return "";
+      const [y, m, d] = dateStr.split("-");
+      return `${d}/${m}/${y}`;
+    }
+
+    function formatYMD(year, monthIndex, day) {
+      const m = String(monthIndex + 1).padStart(2, "0");
+      const d = String(day).padStart(2, "0");
+      return `${year}-${m}-${d}`;
+    }
+
+    function formatMonthTitle(year, monthIndex) {
+      const months =
+        (translations[currentLang] && translations[currentLang].months) ||
+        translations.en.months;
+      if (currentLang === "zh") {
+        return `${year}年${months[monthIndex]}`;
+      }
+      return `${months[monthIndex]} ${year}`;
+    }
+
+    function setSelectedMood(mood) {
+      const hidden = document.getElementById("mood");
+      hidden.value = mood;
+      const buttons = document.querySelectorAll(".mood-option");
+      buttons.forEach((btn) => {
+        const value = parseInt(btn.dataset.mood, 10);
+        btn.classList.toggle("selected", value === mood);
+      });
+    }
+
+    function setStaticTexts() {
+      const titleEl = document.getElementById("titleText");
+      if (titleEl) titleEl.textContent = t("title");
+
+      const subtitleEl = document.getElementById("subtitleText");
+      if (subtitleEl) subtitleEl.textContent = t("subtitle");
+
+      const labelDate = document.getElementById("labelDate");
+      if (labelDate) labelDate.textContent = t("date");
+
+      const labelMood = document.getElementById("labelMood");
+      if (labelMood) labelMood.textContent = t("mood");
+
+      const labelNotes = document.getElementById("labelNotes");
+      if (labelNotes) labelNotes.textContent = t("notes");
+
+      const noteArea = document.getElementById("note");
+      if (noteArea) noteArea.placeholder = t("notesPlaceholder");
+
+      const saveBtn = document.getElementById("btnSaveMood");
+      if (saveBtn) saveBtn.textContent = t("saveMood");
+
+      const clearBtn = document.getElementById("clearDataBtn");
+      if (clearBtn) clearBtn.textContent = t("clearData");
+
+      const heading = document.getElementById("yourMoodsHeading");
+      if (heading) heading.textContent = t("yourMoods");
+
+      const tabList = document.getElementById("tabList");
+      if (tabList) tabList.textContent = t("tabList");
+
+      const tabCalendar = document.getElementById("tabCalendar");
+      if (tabCalendar) tabCalendar.textContent = t("tabCalendar");
+
+      const tabEntry = document.getElementById("tabEntry");
+      if (tabEntry) tabEntry.textContent = t("tabEntry");
+
+      const tabHistory = document.getElementById("tabHistory");
+      if (tabHistory) tabHistory.textContent = t("tabHistory");
+
+      const langToggle = document.getElementById("languageToggle");
+      if (langToggle) {
+        langToggle.textContent = t("langButton");
+      }
+
+      const moodLabelEls = document.querySelectorAll("[data-mood-label]");
+      moodLabelEls.forEach((el) => {
+        const moodValue = parseInt(el.getAttribute("data-mood-label"), 10);
+        el.textContent = getMoodLabel(moodValue);
+      });
+    }
+
+    function applyTheme(theme) {
+      const body = document.body;
+      const toggleBtn = document.getElementById("themeToggle");
+
+      if (theme === "dark") {
+        body.classList.add("theme-dark");
+        body.classList.remove("theme-light");
+        if (toggleBtn) toggleBtn.textContent = t("themeLight");
+      } else {
+        body.classList.add("theme-light");
+        body.classList.remove("theme-dark");
+        if (toggleBtn) toggleBtn.textContent = t("themeDark");
+      }
+
+      localStorage.setItem(THEME_KEY, theme);
+    }
+
+    function applyLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem(LANG_KEY, lang);
+      setStaticTexts();
+      const theme = localStorage.getItem(THEME_KEY) || "light";
+      applyTheme(theme);
+    }
+
+    function renderListView(entries) {
+      const container = document.getElementById("listView");
+      container.innerHTML = "";
+
+      if (!entries.length) {
+        const empty = document.createElement("div");
+        empty.className = "entries-empty";
+        empty.textContent = t("noEntries");
+        container.appendChild(empty);
+        return;
+      }
+
+      for (const entry of entries) {
+        const moodInfo = moodMeta[entry.mood] || moodMeta[3];
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "entry";
+
+        const main = document.createElement("div");
+        main.className = "entry-main";
+
+        const topRow = document.createElement("div");
+        topRow.className = "entry-top-row";
+
+        const dateEl = document.createElement("div");
+        dateEl.className = "entry-date";
+        dateEl.textContent = formatDate(entry.date);
+
+        const moodBadge = document.createElement("div");
+        moodBadge.className = "entry-mood-badge";
+        moodBadge.innerHTML = `<span>${moodInfo.emoji}</span><span>${getMoodLabel(
+          entry.mood
+        )}</span>`;
+
+        topRow.appendChild(dateEl);
+        topRow.appendChild(moodBadge);
+
+        const noteEl = document.createElement("div");
+        noteEl.className = "entry-note";
+        noteEl.textContent = entry.note || "(no note)";
+
+        main.appendChild(topRow);
+        main.appendChild(noteEl);
+
+        const actions = document.createElement("div");
+        actions.className = "entry-actions";
+
+        const delBtn = document.createElement("button");
+        delBtn.type = "button";
+        delBtn.className = "btn-secondary";
+        delBtn.textContent = t("delete");
+        delBtn.addEventListener("click", () => {
+          deleteEntry(entry.id);
+        });
+
+        actions.appendChild(delBtn);
+
+        wrapper.appendChild(main);
+        wrapper.appendChild(actions);
+        container.appendChild(wrapper);
+      }
+    }
+
+    function renderCalendarView(entries) {
+      const container = document.getElementById("calendarView");
+      container.innerHTML = "";
+
+      const header = document.createElement("div");
+      header.className = "calendar-header";
+
+      const prevBtn = document.createElement("button");
+      prevBtn.type = "button";
+      prevBtn.className = "calendar-nav-btn";
+      prevBtn.textContent = "‹";
+      prevBtn.setAttribute("data-cal-nav", "prev");
+
+      const title = document.createElement("div");
+      title.className = "calendar-title";
+      title.textContent = formatMonthTitle(currentYear, currentMonth);
+
+      const nextBtn = document.createElement("button");
+      nextBtn.type = "button";
+      nextBtn.className = "calendar-nav-btn";
+      nextBtn.textContent = "›";
+      nextBtn.setAttribute("data-cal-nav", "next");
+
+      header.appendChild(prevBtn);
+      header.appendChild(title);
+      header.appendChild(nextBtn);
+      container.appendChild(header);
+
+      const grid = document.createElement("div");
+      grid.className = "calendar-grid";
+
+      const weekdays =
+        (translations[currentLang] && translations[currentLang].weekdays) ||
+        translations.en.weekdays;
+      weekdays.forEach((day) => {
+        const w = document.createElement("div");
+        w.className = "calendar-weekday";
+        w.textContent = day;
+        grid.appendChild(w);
+      });
+
+      const firstDay = new Date(currentYear, currentMonth, 1);
+      let startDay = firstDay.getDay(); // 0=Sun
+      startDay = (startDay + 6) % 7; // 0=Mon
+      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+      const map = {};
+      entries.forEach((entry) => {
+        const [y, m, d] = entry.date.split("-");
+        const yNum = parseInt(y, 10);
+        const mNum = parseInt(m, 10) - 1;
+        if (yNum === currentYear && mNum === currentMonth) {
+          if (!map[entry.date]) map[entry.date] = [];
+          map[entry.date].push(entry);
+        }
+      });
+
+      for (let i = 0; i < startDay; i++) {
+        const cell = document.createElement("div");
+        cell.className = "calendar-cell calendar-cell-empty";
+        grid.appendChild(cell);
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const cell = document.createElement("div");
+        cell.className = "calendar-cell";
+        cell.style.backgroundColor = "transparent";
+
+        const dayNumber = document.createElement("div");
+        dayNumber.className = "calendar-day-number";
+        dayNumber.textContent = String(day);
+        cell.appendChild(dayNumber);
+
+        const dateStr = formatYMD(currentYear, currentMonth, day);
+        const dayEntries = map[dateStr];
+
+        if (dayEntries && dayEntries.length) {
+          const moodsEl = document.createElement("div");
+          moodsEl.className = "calendar-moods";
+
+          let worstMood = 5;
+          dayEntries.forEach((entry) => {
+            const info = moodMeta[entry.mood] || moodMeta[3];
+            if (!info || !info.img) return;
+            const img = document.createElement("img");
+            img.src = info.img;
+            img.alt = getMoodLabel(entry.mood);
+            moodsEl.appendChild(img);
+            if (entry.mood < worstMood) worstMood = entry.mood;
+          });
+
+          const bg = calendarMoodColors[worstMood];
+          if (bg) {
+            cell.style.backgroundColor = bg;
+          }
+
+          cell.appendChild(moodsEl);
+        }
+
+        grid.appendChild(cell);
+      }
+
+      container.appendChild(grid);
+    }
+
+    function renderEntries() {
+      const entries = getEntries().sort((a, b) => b.timestamp - a.timestamp);
+      renderListView(entries);
+      renderCalendarView(entries);
+    }
+
+    function deleteEntry(id) {
+      const entries = getEntries().filter((e) => e.id !== id);
+      saveEntries(entries);
+      renderEntries();
+    }
+
+    function changeMonth(offset) {
+      currentMonth += offset;
+      if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear -= 1;
+      } else if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear += 1;
+      }
+      renderEntries();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const today = new Date();
+      currentYear = today.getFullYear();
+      currentMonth = today.getMonth();
+
+      const dateInput = document.getElementById("date");
+      dateInput.value = today.toISOString().slice(0, 10);
+
+      const savedLang = localStorage.getItem(LANG_KEY) || "en";
+      currentLang = savedLang;
+      setStaticTexts();
+
+      const savedTheme = localStorage.getItem(THEME_KEY) || "light";
+      applyTheme(savedTheme);
+
+      const themeToggle = document.getElementById("themeToggle");
+      if (themeToggle) {
+        themeToggle.addEventListener("click", () => {
+          const currentTheme = localStorage.getItem(THEME_KEY) || "light";
+          const next = currentTheme === "dark" ? "light" : "dark";
+          applyTheme(next);
+        });
+      }
+
+      const langToggle = document.getElementById("languageToggle");
+      if (langToggle) {
+        langToggle.addEventListener("click", () => {
+          const nextLang = currentLang === "en" ? "zh" : "en";
+          applyLanguage(nextLang);
+          renderEntries();
+        });
+      }
+
+      const buttons = document.querySelectorAll(".mood-option");
+      buttons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const mood = parseInt(btn.dataset.mood, 10);
+          setSelectedMood(mood);
+        });
+      });
+
+      setSelectedMood(3);
+
+      const form = document.getElementById("entryForm");
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const date = dateInput.value;
+        const mood = parseInt(document.getElementById("mood").value, 10);
+        const note = document.getElementById("note").value.trim();
+
+        if (!date || isNaN(mood)) {
+          alert(t("validationSelectMood"));
+          return;
+        }
+
+        const entries = getEntries();
+        const newEntry = {
+          id: Date.now(),
+          date,
+          mood,
+          note,
+          timestamp: Date.now()
+        };
+
+        entries.push(newEntry);
+        saveEntries(entries);
+
+        document.getElementById("note").value = "";
+        renderEntries();
+      });
+
+      const mainTabs = document.querySelectorAll(".main-tab");
+      const entrySection = document.getElementById("entrySection");
+      const historySection = document.getElementById("historySection");
+      mainTabs.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const target = btn.dataset.main;
+          mainTabs.forEach((b) => b.classList.toggle("active", b === btn));
+          entrySection.classList.toggle("hidden", target !== "entry");
+          historySection.classList.toggle("hidden", target !== "history");
+        });
+      });
+
+      const viewTabs = document.querySelectorAll(".view-tab");
+      const listView = document.getElementById("listView");
+      const calendarView = document.getElementById("calendarView");
+      viewTabs.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const view = btn.dataset.view;
+          viewTabs.forEach((b) => b.classList.toggle("active", b === btn));
+          listView.classList.toggle("hidden", view !== "list");
+          calendarView.classList.toggle("hidden", view !== "calendar");
+        });
+      });
+
+      document.addEventListener("click", (e) => {
+        const target = e.target.closest("[data-cal-nav]");
+        if (!target) return;
+        const offset = target.dataset.calNav === "prev" ? -1 : 1;
+        changeMonth(offset);
+      });
+
+      const clearBtn = document.getElementById("clearDataBtn");
+      if (clearBtn) {
+        clearBtn.addEventListener("click", () => {
+          if (confirm(t("clearConfirm"))) {
+            localStorage.removeItem(STORAGE_KEY);
+            renderEntries();
+            alert(t("clearDone"));
+          }
+        });
+      }
+
+      renderEntries();
+    });
+  </script>
+</body>
+</html>
